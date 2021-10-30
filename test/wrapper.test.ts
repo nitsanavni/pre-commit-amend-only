@@ -8,9 +8,13 @@ import { GenericContainer, Wait } from "testcontainers";
 test("hook is installed", async (t) => {
   t.timeout(30000);
   t.plan(1);
-  const container = await new GenericContainer("node:alpine")
+  const container = await new GenericContainer("timbru31/node-alpine-git")
     .withBindMount(path.resolve("."), "/test", "ro")
-    .withCmd(["/bin/sh", "-c", "cd /test && npx ava --verbose test.js;"])
+    .withCmd([
+      "/bin/sh",
+      "-c",
+      "cd /test && npx ava --verbose --timeout 2m test.js;",
+    ])
     .withWaitStrategy(Wait.forLogMessage(/1 test/))
     .start();
 

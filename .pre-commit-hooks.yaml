@@ -1,0 +1,5 @@
+- id: empty-or-ammend
+  name: Empty or Amend Commits Only
+  description: Enforces writing commit messages *before* the code itself.
+  entry: hook.sh
+  language: script

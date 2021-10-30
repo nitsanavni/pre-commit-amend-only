@@ -22,7 +22,7 @@ test("hook is installed", async (t) => {
   const result = await new Promise<string>((re, j) =>
     stream
       .on("data", (d) => {
-        if (/1 test/m.test(String(d))) {
+        if (/1 test/m.test(d)) {
           re(String(d));
         }
       })

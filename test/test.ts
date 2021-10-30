@@ -1,6 +1,6 @@
 import test from "ava";
-import { $ } from "zx";
+import { $, nothrow } from "zx";
 
-test("hook is installed", async (t) => {
-  t.regex((await $`git --version`).stdout, /git version 2\.\d{2}\.\d{1,2}/);
+test("scaffolding - not a git repository", async (t) => {
+  t.regex((await nothrow($`git status`)).stderr, /not a git repository/im);
 });

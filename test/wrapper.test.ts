@@ -3,7 +3,6 @@ dotenv.config();
 import test from "ava";
 import path from "path";
 import { GenericContainer, Wait } from "testcontainers";
-// import { Promise } from ""
 
 test("hook is installed", async (t) => {
   t.timeout(30000);
@@ -13,7 +12,7 @@ test("hook is installed", async (t) => {
     .withCmd([
       "/bin/sh",
       "-c",
-      "cd /test && npx ava --verbose --timeout 2m test.js;",
+      "cd /test && npx ava --verbose --timeout 2m test.js",
     ])
     .withWaitStrategy(Wait.forLogMessage(/1 test/))
     .start();
@@ -32,6 +31,4 @@ test("hook is installed", async (t) => {
   );
 
   t.regex(result, /pass/);
-
-  return;
 });

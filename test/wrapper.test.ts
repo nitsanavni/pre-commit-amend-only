@@ -10,10 +10,11 @@ test("hook is installed", async (t) => {
 
   const container = await new GenericContainer("timbru31/node-alpine-git")
     .withBindMount(path.resolve("."), "/test", "ro")
+    .withCopyFileToContainer(path.resolve("../hook.sh"), "/hook/hook.sh")
     .withCmd([
       "/bin/sh",
       "-c",
-      "cd /test && npx ava --verbose --timeout 2m test.js",
+      "cd /test && npx ava --verbose --timeout --serial 2m test.js",
     ])
     .start();
 

@@ -6,6 +6,7 @@ test("scaffolding - not a git repository", async (t) => {
 });
 
 test("git init", async (t) => {
+  t.timeout(30000);
   const { stdout: path } = await $`mktemp -d`;
 
   await $`mkdir -p ${path}`;
@@ -18,5 +19,5 @@ test("git init", async (t) => {
   await $`cp /hook/hook.sh .git/hooks/pre-commit`;
   await $`echo hello > file`;
   await $`git add .`;
-  t.is((await $`git commit -m my-commit`).exitCode, 0);
+  t.is(await $`git commit -m my-commit`.exitCode, 1);
 });

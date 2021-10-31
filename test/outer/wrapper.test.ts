@@ -4,32 +4,24 @@ import test from "ava";
 import path from "path";
 import { GenericContainer } from "testcontainers";
 
+import { buildImage } from "./build-image";
+import { runInContainer } from "./run-in-container";
+
 test("hook is installed", async (t) => {
   t.timeout(30000);
   t.plan(1);
 
-  const container = await new GenericContainer("timbru31/node-alpine-git")
+  const container = (await buildImage())
     .withBindMount(path.resolve("."), "/test", "ro")
-    .withCopyFileToContainer(path.resolve("../hook.sh"), "/hook/hook.sh")
-    .withCmd([
-      "/bin/sh",
-      "-c",
-      "cd /test && npx ava --verbose --timeout --serial 2m in-docker/*",
-    ])
-    .start();
+    .withCopyFileToContainer(path.resolve("../hook.sh"), "/hook/hook.sh");
 
-  const stream = await container.logs();
+  const cmd = [
+    "/bin/sh",
+    "-c",
+    "cd /test && npx ava --verbose --timeout --serial 2m in-docker/*",
+  ];
 
-  const result = await new Promise<string>((re, j) =>
-    stream
-      .on("data", (d) => {
-        if (/1 test/m.test(d)) {
-          re(String(d));
-        }
-      })
-      .on("error", (d) => j(String(d)))
-      .on("end", () => j())
-  );
+  const result = await runInContainer({ container, cmd });
 
-  t.regex(result, /pass/);
+  t.regex(result, /2 tests passed/);
 });

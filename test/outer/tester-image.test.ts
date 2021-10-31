@@ -1,24 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config();
 import test, { beforeEach } from "ava";
-import { GenericContainer } from "testcontainers";
 import { $ } from "zx";
 
-import { toString } from "./readable-to-string";
-
-const buildImage = () => GenericContainer.fromDockerfile(".").build();
-
-const run = async ({
-  container,
-  cmd,
-}: {
-  container: GenericContainer;
-  cmd: string[];
-}): Promise<string> => {
-  const started = await container.withCmd(cmd).start();
-
-  return toString(await started.logs());
-};
+import { buildImage } from "./build-image";
+import { runInContainer } from "./run-in-container";
 
 type Context = {
   run: (arg: { cmd: string[] }) => Promise<string>;
@@ -29,7 +15,7 @@ beforeEach(async (t) => {
   const container = await buildImage();
 
   (t.context as Context).run = ({ cmd }: { cmd: string[] }) =>
-    run({ container, cmd });
+    runInContainer({ container, cmd });
 });
 
 test("custom image supports `ps -ocommand`", async (t) => {
@@ -42,6 +28,7 @@ test("custom image supports `ps -ocommand`", async (t) => {
 });
 
 test("custom image supports `grep -e PATTERN`", async (t) => {
+  t.timeout(50000);
   const run = (t.context as Context).run;
 
   t.regex(

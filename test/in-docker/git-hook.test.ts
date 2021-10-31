@@ -5,7 +5,7 @@ test("scaffolding - not a git repository", async (t) => {
   t.regex((await nothrow($`git status`)).stderr, /not a git repository/im);
 });
 
-test("git init", async (t) => {
+test("non-empty commit", async (t) => {
   t.timeout(30000);
   const { stdout: path } = await $`mktemp -d`;
 
@@ -19,5 +19,11 @@ test("git init", async (t) => {
   await $`cp /hook/hook.sh .git/hooks/pre-commit`;
   await $`echo hello > file`;
   await $`git add .`;
-  t.is(await $`git commit -m my-commit`.exitCode, 1);
+
+  // attempt to commit
+  const { exitCode, stdout } = await nothrow($`git commit -m my-commit`);
+
+  // but stopped by hook
+  t.is(exitCode, 1);
+  t.regex(stdout, /start with the end in mind/);
 });

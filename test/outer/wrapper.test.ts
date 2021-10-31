@@ -2,12 +2,10 @@ import dotenv from "dotenv";
 dotenv.config();
 import test from "ava";
 import path from "path";
-import { GenericContainer } from "testcontainers";
-
 import { buildImage } from "./build-image";
 import { runInContainer } from "./run-in-container";
 
-test("hook is installed", async (t) => {
+test("run tests in docker", async (t) => {
   t.timeout(30000);
   t.plan(1);
 

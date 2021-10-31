@@ -2,7 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import test from "ava";
 import { GenericContainer } from "testcontainers";
-import { Readable } from "stream";
+
+import { toString } from "./readable-to-string";
 
 test("custom image support `ps -ocommand`", async (t) => {
   t.timeout(50000);
@@ -12,15 +13,6 @@ test("custom image support `ps -ocommand`", async (t) => {
 
   const runPs = (container: GenericContainer) =>
     container.withCmd(["ps", "-ocommand"]).start();
-
-  const toString = (readable: Readable) =>
-    new Promise<string>((resolve, reject) => {
-      let str = "";
-      readable
-        .on("data", (d) => (str += String(d)))
-        .on("end", () => resolve(str))
-        .on("error", reject);
-    });
 
   const image = await buildImage();
   const container = await runPs(image);

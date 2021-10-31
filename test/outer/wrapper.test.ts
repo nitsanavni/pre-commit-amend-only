@@ -14,7 +14,7 @@ test("hook is installed", async (t) => {
     .withCmd([
       "/bin/sh",
       "-c",
-      "cd /test && npx ava --verbose --timeout --serial 2m test.js",
+      "cd /test && npx ava --verbose --timeout --serial 2m in-docker/*",
     ])
     .start();
 

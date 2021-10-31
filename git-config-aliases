@@ -1,4 +1,5 @@
-# git config --local include.path git-config-aliases
+# git config --local include.path $PWD/git-config-aliases
+
 [alias]
     plan = commit --allow-empty
     amend = commit --amend
